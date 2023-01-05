@@ -1,6 +1,9 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
+import { createArgoCDHelmChart } from "./argocd";
+import { Service } from "@pulumi/kubernetes/core/v1";
+import { Output } from "@pulumi/pulumi";
 
 // Grab some values from the Pulumi configuration (or use default values)
 const config = new pulumi.Config();
@@ -10,6 +13,7 @@ const desiredClusterSize = config.getNumber("desiredClusterSize") || 2;
 const eksNodeInstanceType = config.get("eksNodeInstanceType") || "t3.small";
 // Problem : no available/free pods if choosing to too small EC2 instance, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/eni-max-pods.txt
 const vpcNetworkCidr = config.get("vpcNetworkCidr") || "10.0.0.0/16";
+const isMinikube = config.requireBoolean("isMinikube");
 
 // Create a new VPC
 const eksVpc = new awsx.ec2.Vpc("eks-vpc", {
@@ -38,6 +42,32 @@ const eksCluster = new eks.Cluster("eks-cluster", {
     version: "1.24",
 });
 
+let frontend: pulumi.Output<Service> | undefined = undefined;
+
+let hostname: Output<string>;
+
+function setupArgo() : Output<string> {
+    if(process.env.SETUP_ARGO_CD) {
+        const argocd = createArgoCDHelmChart(eksCluster.kubeconfig);
+        const frontend = argocd.getResource("v1/Service", "argocd/argocd-server");
+        // When "done", this will print the public IP.
+        return isMinikube
+        ? frontend.spec.clusterIP
+        : frontend.status.loadBalancer.apply(
+            (lb) => lb.ingress[0].ip || "https://" + lb.ingress[0].hostname
+        );
+    } 
+    return Output.create("no-op");
+}
+
+
+
 // Export some values for use elsewhere
 export const kubeconfig = eksCluster.kubeconfig;
 export const vpcId = eksVpc.vpcId;
+export const apaId = setupArgo();
+// export const ip = isMinikube
+//     ? frontend.spec.clusterIP
+//     : frontend.status.loadBalancer.apply(
+//         (lb) => lb.ingress[0].ip || "https://" + lb.ingress[0].hostname
+//     );
