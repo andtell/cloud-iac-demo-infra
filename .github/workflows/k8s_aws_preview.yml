@@ -1,0 +1,55 @@
+name: EKS - Preview/Check 🔍
+on:
+  pull_request:
+    branches:
+      - develop
+    paths:
+      - 'aws/eks-gitops/**'
+  push:
+    branches:
+      - develop
+    paths:
+      -  'aws/eks-gitops/**'
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
+
+env: 
+  WORK_DIR: aws/eks-gitops
+
+jobs:
+  preview:
+    name: Preview
+    runs-on: ubuntu-latest
+    steps:
+      - name: Configuration for main branch 🏭
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo "PULUMI_STACK=prod" >> $GITHUB_ENV
+      - name: Configuration for develop branch 😎
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: echo "PULUMI_STACK=dev" >> $GITHUB_ENV
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+      - name: Setup Node ✨
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Configure AWS Credentials 🔐
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Installing dependencies 📦️
+        run: |
+          cd ./${{ env.WORK_DIR }}
+          npm install
+      - name: Infrastructure preview 🔍
+        uses: pulumi/actions@v3
+        with:
+          command: preview
+          stack-name: ${{ env.PULUMI_STACK }} # When using an individual account, only use stack-name.
+          work-dir: ${{ env.WORK_DIR }}
+          refresh: true;
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
