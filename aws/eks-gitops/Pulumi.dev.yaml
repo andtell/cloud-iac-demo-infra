@@ -1,0 +1,7 @@
+config:
+  aws:region: eu-north-1
+  eks-gitops:desiredClusterSize: "2"
+  eks-gitops:eksNodeInstanceType: t3.small
+  eks-gitops:maxClusterSize: "6"
+  eks-gitops:minClusterSize: "2"
+  eks-gitops:vpcNetworkCidr: 10.0.0.0/16
