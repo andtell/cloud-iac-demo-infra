@@ -44,5 +44,6 @@ jobs:
           stack-name: ${{ inputs.pulumi-stack }} # When using an individual account, only use stack-name.
           work-dir: ${{ env.WORK_DIR }}
           refresh: true;
+          comment-on-pr: true;
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
