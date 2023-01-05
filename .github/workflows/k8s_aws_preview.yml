@@ -1,18 +1,11 @@
-name: EKS - Preview/Check 🔍
+name: Pulumi Preview/Check 🔍
+
 on:
-  pull_request:
-    branches:
-      - develop
-    paths:
-      - 'aws/eks-gitops/**'
-  push:
-    branches:
-      - develop
-    paths:
-      -  'aws/eks-gitops/**'
-  workflow_dispatch:
-  schedule:
-    - cron: '0 * * * *'
+  workflow_call:
+    inputs:
+      pulumi-stack:
+        required: true
+        type: string
 
 env: 
   WORK_DIR: aws/eks-gitops
@@ -24,10 +17,10 @@ jobs:
     steps:
       - name: Configuration for main branch 🏭
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: echo "PULUMI_STACK=prod" >> $GITHUB_ENV
+        run: echo "PULUMI_STACK=dev" >> $GITHUB_ENV
       - name: Configuration for develop branch 😎
         if: ${{ github.ref == 'refs/heads/develop' }}
-        run: echo "PULUMI_STACK=dev" >> $GITHUB_ENV
+        run: echo "PULUMI_STACK=todo" >> $GITHUB_ENV
       - name: Checkout 🛎️
         uses: actions/checkout@v3
       - name: Setup Node ✨
@@ -48,7 +41,7 @@ jobs:
         uses: pulumi/actions@v3
         with:
           command: preview
-          stack-name: ${{ env.PULUMI_STACK }} # When using an individual account, only use stack-name.
+          stack-name: ${{ inputs.pulumi-stack }} # When using an individual account, only use stack-name.
           work-dir: ${{ env.WORK_DIR }}
           refresh: true;
         env:
