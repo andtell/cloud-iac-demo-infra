@@ -36,13 +36,13 @@ export function createArgoCDHelmChart(kubeconfig: pulumi.Input<string>) : k8s.he
         },
         // The helm chart is using a deprecated apiVersion,
             // So let's transform it
-        transformations: [
-            (obj: any) => {
-                if (obj.apiVersion == "extensions/v1beta1")  {
-                    obj.apiVersion = "networking.k8s.io/v1beta1"
-                }
-            },
-        ],
+        // transformations: [
+        //     (obj: any) => {
+        //         if (obj.apiVersion == "extensions/v1beta1")  {
+        //             obj.apiVersion = "networking.k8s.io/v1beta1"
+        //         }
+        //     },
+        // ],
     },
     { providers: { kubernetes: provider }});
 
