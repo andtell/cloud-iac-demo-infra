@@ -1,8 +1,8 @@
 config:
   aws:region: eu-north-1
   aws:defaultTags:
-  tags:
-    project: cadec23
+    tags:
+      project: cadec23
   eks-gitops:desiredClusterSize: "2"
   eks-gitops:eksNodeInstanceType: t3.small
   eks-gitops:maxClusterSize: "6"
