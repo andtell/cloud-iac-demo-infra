@@ -23,6 +23,7 @@ jobs:
       # & see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idoutputs
     outputs:
       kubeconfig: ${{ steps.pulumi-up.outputs.kubeconfig }}
+      kubeconfig2: ${{ steps.kube-conf.outputs.kubeconfig }}
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
@@ -91,12 +92,16 @@ jobs:
       #     echo "::set-output name=kubeconfig::$(pulumi stack output kubeconfig)"
       #   working-directory: ${{ env.WORK_DIR }}
 
+        # https://stackoverflow.com/questions/59175332/using-output-from-a-previous-job-in-a-new-one-in-a-github-action
       - name: Try to connect to our EKS cluster using kubectl 🔌
+        id: kube-conf
         run: |
           mkdir ~/.kube
           echo '${{ steps.pulumi-up.outputs.kubeconfig }}' > ~/.kube/config
           echo "--- Checking connectivity to cluster"
           kubectl get nodes
+          run: echo "kubeconfig=${{ steps.pulumi-up.outputs.kubeconfig }}" >> $GITHUB_OUTPUT
+          
 
       # - name: Install Traefik via Helm
       #   run: |
@@ -161,9 +166,9 @@ jobs:
       - name: Configure kubeconfig to use with kubectl from provisioning job
         run: |
           mkdir ~/.kube
-          echo '${{ needs.provision-eks-with-pulumi.outputs.kubeconfig }}'
-          echo "${{ needs.provision-eks-with-pulumi.outputs.kubeconfig }}"
-          echo '${{ needs.provision-eks-with-pulumi.outputs.kubeconfig }}' > ~/.kube/config
+          echo '${{ needs.provision-eks-with-pulumi.outputs.kubeconfig2 }}'
+          echo "${{ needs.provision-eks-with-pulumi.outputs.kubeconfig2 }}"
+          echo '${{ needs.provision-eks-with-pulumi.outputs.kubeconfig2 }}' > ~/.kube/config
           echo "--- Checking connectivity to cluster"
           kubectl get nodes
       # - name: Install ArgoCD
