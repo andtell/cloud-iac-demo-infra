@@ -23,7 +23,7 @@ jobs:
       # & see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idoutputs
     outputs:
       kubeconfig: ${{ steps.pulumi-up.outputs.kubeconfig }}
-      kubeconfig2: ${{ steps.kube-conf.outputs.kubeconfig }}
+      kubeconfig2: ${{ steps.kube-conf.outputs.kubeconfig2 }}
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
@@ -100,7 +100,7 @@ jobs:
           echo '${{ steps.pulumi-up.outputs.kubeconfig }}' > ~/.kube/config
           echo "--- Checking connectivity to cluster"
           kubectl get nodes
-          echo "kubeconfig=${{ steps.pulumi-up.outputs.kubeconfig }}" >> $GITHUB_OUTPUT
+          echo 'kubeconfig2=${{ steps.pulumi-up.outputs.kubeconfig }}' >> $GITHUB_OUTPUT
           
 
       # - name: Install Traefik via Helm
