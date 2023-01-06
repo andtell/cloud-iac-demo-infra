@@ -100,7 +100,7 @@ jobs:
           echo '${{ steps.pulumi-up.outputs.kubeconfig }}' > ~/.kube/config
           echo "--- Checking connectivity to cluster"
           kubectl get nodes
-          run: echo "kubeconfig=${{ steps.pulumi-up.outputs.kubeconfig }}" >> $GITHUB_OUTPUT
+          echo "kubeconfig=${{ steps.pulumi-up.outputs.kubeconfig }}" >> $GITHUB_OUTPUT
           
 
       # - name: Install Traefik via Helm
