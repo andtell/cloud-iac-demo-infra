@@ -86,7 +86,7 @@ jobs:
       - name: Try to connect to EKS cluster 🔌
         id: kube-conf
         run: |
-          mkdir ~/.kube
+          mkdir -p ~/.kube
           echo '${{ steps.pulumi-up.outputs.kubeconfig }}' > ~/.kube/config
           echo "--- Checking connectivity to cluster"
           kubectl get nodes          
@@ -141,7 +141,7 @@ jobs:
       - name: Verify ArgoCD
         run: |
           echo "--- Set kubeconfig from previous step."
-          mkdir ~/.kube
+          mkdir -p ~/.kube
           echo '${{ steps.pulumi-up-argocd.outputs.kubeconfig }}' > ~/.kube/config
           echo "--- Wait until Secret argocd-initial-admin-secret got created for the following argocd login"
           until kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data}" | grep "password"; do : ; done
