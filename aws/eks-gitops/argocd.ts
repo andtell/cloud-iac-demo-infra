@@ -12,9 +12,9 @@ const isMinikube = config.requireBoolean("isMinikube");
 //     return createArgoCDHelmChart(kubeConfig);
 // }
 
-export function createArgoCDHelmChart(kubeconfig: pulumi.Input<string>) : k8s.helm.v3.Chart {
+export function createArgoCDHelmChart(provider: k8s.Provider) : k8s.helm.v3.Chart {
 
-    const provider = new k8s.Provider("k8sProvider", {kubeconfig});
+    // const provider = new k8s.Provider("k8sProvider", {kubeconfig});
     
     const argocdNamespace = new k8s.core.v1.Namespace("argocd-ns", {
         metadata: { name: name },
@@ -47,16 +47,3 @@ export function createArgoCDHelmChart(kubeconfig: pulumi.Input<string>) : k8s.he
     { providers: { kubernetes: provider }});
 
 }
-
-
-
-
-// Export the public IP for WordPress.
-//const frontend = argocd.getResource("v1/Service", "argocd/argocd-server");
-
-// When "done", this will print the public IP.
-// export const ip = isMinikube
-//     ? frontend.spec.clusterIP
-//     : frontend.status.loadBalancer.apply(
-//           (lb) => lb.ingress[0].ip || "https://" + lb.ingress[0].hostname
-//       );

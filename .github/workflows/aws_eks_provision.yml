@@ -89,7 +89,8 @@ jobs:
           mkdir -p ~/.kube
           echo '${{ steps.pulumi-up.outputs.kubeconfig }}' > ~/.kube/config
           echo "--- Checking connectivity to cluster"
-          kubectl get nodes          
+          kubectl get nodes
+          kubectl version --short          
 
   install-and-run-argocd-on-eks:
     runs-on: ubuntu-latest

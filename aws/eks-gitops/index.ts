@@ -42,13 +42,9 @@ const eksCluster = new eks.Cluster("eks-cluster", {
     version: "1.24",
 });
 
-let frontend: pulumi.Output<Service> | undefined = undefined;
-
-let hostname: Output<string>;
-
 function setupArgo() : Output<string> {
     if(process.env.SETUP_ARGO_CD) {
-        const argocd = createArgoCDHelmChart(eksCluster.kubeconfig);
+        const argocd = createArgoCDHelmChart(eksCluster.provider);
         const frontend = argocd.getResource("v1/Service", "argocd/argocd-server");
         // When "done", this will print the public IP.
         return isMinikube
