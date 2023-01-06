@@ -1,0 +1,62 @@
+name: EKS - Teardown 💣
+on:
+  # pull_request:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'kubernetes/aws/infra/**'
+  # push:
+  #   branches:
+  #     - main
+  #     - develop
+  #   paths:
+  #     - 'kubernetes/aws/infra/**'
+  # schedule:
+  #   - cron: '0 0 * * *'
+  workflow_dispatch:
+
+env: 
+  WORK_DIR: aws/eks-gitops/
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{github.ref}}
+      - name: Configuration for main branch 🏭
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo "PULUMI_STACK=staging" >> $GITHUB_ENV
+      - name: Configuration for develop branch 😎
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: echo "PULUMI_STACK=staging" >> $GITHUB_ENV
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+      - name: Setup Node ✨
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Configure AWS Credentials 🔐
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Cache node_modules 📦️
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install Pulumi dependencies 📦️ 
+        run: npm install
+        working-directory: ${{ env.WORK_DIR }}
+      - name: Applying infrastructure 🚀
+        uses: pulumi/actions@v3
+        with:
+          command: destroy
+          stack-name: ${{ env.PULUMI_STACK }}
+          work-dir: ${{ env.WORK_DIR }}
+          refresh: true;
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
