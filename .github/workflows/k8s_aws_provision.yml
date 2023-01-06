@@ -98,7 +98,11 @@ jobs:
       #   working-directory: ${{ env.WORK_DIR }}
 
       - name: Try to connect to our EKS cluster using kubectl
-        run: kubectl get nodes
+        run: |
+          mkdir ~/.kube
+          echo '${{ needs.provision-eks-with-pulumi.outputs.kubeconfig }}' > ~/.kube/config
+          echo "--- Checking connectivity to cluster"
+          kubectl get nodes
 
       # - name: Install Traefik via Helm
       #   run: |
