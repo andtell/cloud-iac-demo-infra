@@ -63,7 +63,7 @@ function setupArgo() : Output<string> {
 
 
 // Export some values for use elsewhere
-export const kubeconfig = eksCluster.kubeconfig;
+export const kubeconfig = pulumi.secret(eksCluster.kubeconfig); // sensitive - don't want this to be visible in logs
 export const vpcId = eksVpc.vpcId;
 export const apaId = setupArgo();
 // export const ip = isMinikube
