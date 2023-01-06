@@ -12,12 +12,12 @@ env:
 jobs:
   provision-eks-with-pulumi:
     runs-on: ubuntu-latest
-    env:
-      PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+    # env:
+    #   PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
     # Create an GitHub environment referencing our EKS cluster endpoint
     environment:
-      name: traefik-dashboard
-      url: ${{ steps.traefik-expose.outputs.traefik_url }}
+      name: AWS EKS (${{ secrets.AWS_REGION }})
+    #   url: ${{ steps.traefik-expose.outputs.traefik_url }}
       # using outputs for providing the Pulumi created kubeconfig to subsequent jobs
       # see https://stackoverflow.com/a/61236803/4964553
       # & see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idoutputs
@@ -38,14 +38,8 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      # - name: Checkout
-      #   uses: actions/checkout@master
 
-      # - name: Setup node env
-      #   uses: actions/setup-node@v3.4.1
-      #   with:
-      #     node-version: '14'
-
+      # https://docs.github.com/en/actions/using-workflows/caching-dependencies-to-speed-up-workflows
       - name: Cache node_modules
         uses: actions/cache@v3
         with:
@@ -97,7 +91,7 @@ jobs:
       #     echo "::set-output name=kubeconfig::$(pulumi stack output kubeconfig)"
       #   working-directory: ${{ env.WORK_DIR }}
 
-      - name: Try to connect to our EKS cluster using kubectl
+      - name: Try to connect to our EKS cluster using kubectl 🔌
         run: |
           mkdir ~/.kube
           echo '${{ steps.pulumi-up.outputs.kubeconfig }}' > ~/.kube/config
@@ -154,12 +148,12 @@ jobs:
   install-and-run-argocd-on-eks:
     runs-on: ubuntu-latest
     needs: provision-eks-with-pulumi
-    environment:
-      name: argocd-dashboard
-      url: ${{ steps.dashboard-expose.outputs.dashboard_host }}
+    # environment:
+    #   name: argocd-dashboard
+    #   url: ${{ steps.dashboard-expose.outputs.dashboard_host }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@master
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
       # We must use single quotes (!!!) here to access the kubeconfig like this:
       # echo '${{ needs.provision-eks-with-pulumi.outputs.kubeconfig }}' > ~/.kube/config
       # Otherwise we'll run into errors like (see https://stackoverflow.com/a/15930393/4964553):
