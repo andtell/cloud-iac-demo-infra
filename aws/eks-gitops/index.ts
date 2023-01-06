@@ -57,7 +57,7 @@ function setupArgo() : Output<string> {
             (lb) => lb.ingress[0].ip || "https://" + lb.ingress[0].hostname
         );
     } 
-    return Output.create("no-op");
+    return Output.create("** Argo CD not installed **");
 }
 
 
@@ -65,7 +65,7 @@ function setupArgo() : Output<string> {
 // Export some values for use elsewhere
 export const kubeconfig = pulumi.secret(eksCluster.kubeconfig); // sensitive - don't want this to be visible in logs
 export const vpcId = eksVpc.vpcId;
-export const apaId = setupArgo();
+export const argoCDUrl = setupArgo();
 // export const ip = isMinikube
 //     ? frontend.spec.clusterIP
 //     : frontend.status.loadBalancer.apply(
