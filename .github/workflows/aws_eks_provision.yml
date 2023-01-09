@@ -129,6 +129,11 @@ jobs:
 
       - name: Install Pulumi 🏗️
         uses: pulumi/actions@v3
+        with:
+          command: review # This step is only here to install Pulumi CLI to execute in next step...
+          stack-name: staging # When using an individual account, only use stack-name.
+          work-dir: ${{ env.WORK_DIR }}
+          refresh: true;
 
       - name: Install Argo CD 
         id: pulumi-up-argocd # same as step in previous job, but with Argo CD setup added
