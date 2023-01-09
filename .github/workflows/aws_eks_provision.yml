@@ -146,7 +146,6 @@ jobs:
           export SETUP_ARGO_CD=yep
           echo "lets use --suppress-outputs here in order to prevent Pulumi from logging the kubeconfig into public GitHub Action logs"
           pulumi up -y --suppress-outputs
-          until kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data}" | grep "password"; do : ; done
           kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd
         working-directory: ${{ env.WORK_DIR }}
         env:
