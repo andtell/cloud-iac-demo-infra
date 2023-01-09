@@ -2,7 +2,6 @@ import * as pulumi from "@pulumi/pulumi";
 import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
 import { createArgoCDHelmChart } from "./argocd";
-import { Service } from "@pulumi/kubernetes/core/v1";
 import { Output } from "@pulumi/pulumi";
 
 // Grab some values from the Pulumi configuration (or use default values)
@@ -60,6 +59,7 @@ function setupArgo() : Output<string> {
 
 // Export some values for use elsewhere
 export const kubeconfig = pulumi.secret(eksCluster.kubeconfig); // sensitive - don't want this to be visible in logs
+//export const kubeconfig = eksCluster.kubeconfig; // sensitive - don't want this to be visible in logs
 export const vpcId = eksVpc.vpcId;
 export const argoCDUrl = setupArgo();
 // export const ip = isMinikube
