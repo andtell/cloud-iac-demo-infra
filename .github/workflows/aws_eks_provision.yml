@@ -151,7 +151,7 @@ jobs:
           export SETUP_ARGO_CD=yep
           echo "lets use --suppress-outputs here in order to prevent Pulumi from logging the kubeconfig into public GitHub Action logs"
           pulumi up -y --suppress-outputs
-          echo "::set-output name=kubeconfig::$(pulumi stack output kubeconfig)"
+          echo "::set-output name=kubeconfig::$(pulumi stack output kubeconfig --show-secrets)"
         working-directory: ${{ env.WORK_DIR }}
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
