@@ -133,17 +133,12 @@ jobs:
           command: preview # This step is only here to install Pulumi CLI to execute in next step...
           stack-name: staging # When using an individual account, only use stack-name.
           work-dir: ${{ env.WORK_DIR }}
-          refresh: true;
+          # refresh: true;
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
       - name: Install Argo CD 
         id: pulumi-up-argocd # same as step in previous job, but with Argo CD setup added
-        # with:
-        #   command: up
-        #   stack-name: staging # When using an individual account, only use stack-name.
-        #   work-dir: ${{ env.WORK_DIR }}
-        #   refresh: true;
         run: |
           pulumi stack select staging
           mkdir -p ~/.kube
@@ -151,25 +146,9 @@ jobs:
           export SETUP_ARGO_CD=yep
           echo "lets use --suppress-outputs here in order to prevent Pulumi from logging the kubeconfig into public GitHub Action logs"
           pulumi up -y --suppress-outputs
-          echo "::set-output name=kubeconfig::$(pulumi stack output kubeconfig --show-secrets)"
+          until kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data}" | grep "password"; do : ; done
+          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd
         working-directory: ${{ env.WORK_DIR }}
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           SETUP_ARGO_CD: true
-
-      - name: Verify ArgoCD
-        run: |
-          mkdir -p ~/.kube
-          echo '${{ steps.pulumi-up-argod.outputs.kubeconfig }}' > ~/.kube/config
-          echo "--- Checking connectivity to cluster"
-          kubectl get nodes
-          kubectl version --short     
-          echo "--- Wait until Secret argocd-initial-admin-secret got created for the following argocd login"
-          until kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data}" | grep "password"; do : ; done
-          echo "--- Wait until (hopefully) ArgoCD server deployment is ready to be logged in to"
-          kubectl wait --for=condition=ready pod -l app.kubernetes.io/name=argocd-server -n argocd
-          # echo "--- Login argocd CLI - now wrapped in until to prevent dial tcp: lookup <...>: no such host (see https://stackoverflow.com/a/71030112/4964553)"
-          # until argocd login ${{ steps.pulumi-up-argocd.outputs.argoCDUrl }} --username admin --password $(kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo) --insecure; do : ; done
-          # echo "--- Deploy APP definition ?? TODO"
-          # kubectl apply -f argocd/argocd-appproject-apps2deploy.yml
-         
