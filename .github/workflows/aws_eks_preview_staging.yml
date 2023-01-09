@@ -16,7 +16,7 @@ on:
 
 jobs:
   call-preview-workflow:
-    uses: ./.github/workflows/k8s_aws_preview.yml
+    uses: ./.github/workflows/aws_eks_preview.yml
     with:
       pulumi-stack: staging
     secrets: inherit
