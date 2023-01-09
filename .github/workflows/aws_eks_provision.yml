@@ -127,8 +127,10 @@ jobs:
         run: npm install
         working-directory: ${{ env.WORK_DIR }}
 
-      - name: ProvInstall ArgoCD with Pulumi 🏗️
+      - name: Install Pulumi 🏗️
         uses: pulumi/actions@v3
+
+      - name: Install Argo CD 
         id: pulumi-up-argocd # same as step in previous job, but with Argo CD setup added
         # with:
         #   command: up
