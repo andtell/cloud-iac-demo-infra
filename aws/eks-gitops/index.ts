@@ -64,8 +64,3 @@ export const kubeconfig = pulumi.secret(eksCluster.kubeconfig); // sensitive - d
 //export const kubeconfig = eksCluster.kubeconfig; // sensitive - don't want this to be visible in logs
 export const vpcId = eksVpc.vpcId;
 export const argoCDUrl = setupArgo();
-// export const ip = isMinikube
-//     ? frontend.spec.clusterIP
-//     : frontend.status.loadBalancer.apply(
-//         (lb) => lb.ingress[0].ip || "https://" + lb.ingress[0].hostname
-//     );
