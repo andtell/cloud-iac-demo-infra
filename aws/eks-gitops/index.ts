@@ -20,8 +20,9 @@ const eksVpc = new awsx.ec2.Vpc("eks-vpc", {
     cidrBlock: vpcNetworkCidr,
 });
 
+
 // Create the EKS cluster
-const eksCluster = new eks.Cluster("eks-cluster", {
+const eksCluster = new eks.Cluster(`eks-cluster-${pulumi.getStack()}`, {
     // Put the cluster in the new VPC created earlier
     vpcId: eksVpc.vpcId,
     // Public subnets will be used for load balancers
@@ -42,7 +43,7 @@ const eksCluster = new eks.Cluster("eks-cluster", {
 });
 
 function setupArgo() : Output<string> {
-    if(process.env.SETUP_ARGO_CD) {
+    if(process.env.WITH_ARGO_CD) {
         const argocd = createArgoCDHelmChart(eksCluster.provider);
         const frontend = argocd.getResource("v1/Service", "argocd/argocd-server");
         // When "done", this will print the public IP.
@@ -51,8 +52,9 @@ function setupArgo() : Output<string> {
         : frontend.status.loadBalancer.apply(
             (lb) => lb.ingress[0].ip || "https://" + lb.ingress[0].hostname
         );
+    } else {
+        return Output.create("** Argo CD not installed **");
     } 
-    return Output.create("** Argo CD not installed **");
 }
 
 

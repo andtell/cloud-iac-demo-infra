@@ -150,4 +150,4 @@ jobs:
         working-directory: ${{ env.WORK_DIR }}
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-          SETUP_ARGO_CD: true
+          WITH_ARGO_CD: true
