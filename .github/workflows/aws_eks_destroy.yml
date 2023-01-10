@@ -11,7 +11,7 @@ on:
   #     - develop
   #   paths:
   #     - 'kubernetes/aws/infra/**'
-  # schedule:
+  schedule:
     - cron: '0 0 * * *'
   workflow_dispatch:
 
