@@ -1,6 +1,21 @@
 name: EKS - Provision STAGING 🏗️
 
-on: [push]
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'aws/eks-gitops/**'
+  push:
+    branches:
+      - develop
+    paths:
+      -  'aws/eks-gitops/**'
+  workflow_dispatch:
+  schedule:
+    branches:
+      - develop
+    - cron: '0 8-17 * * *'
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

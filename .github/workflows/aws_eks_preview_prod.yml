@@ -2,23 +2,23 @@ name: EKS - Preview/Check STAGING 🔍
 on:
   pull_request:
     branches:
-      - develop
+      - main
     paths:
       - 'aws/eks-gitops/**'
   push:
     branches:
-      - develop
+      - main
     paths:
       -  'aws/eks-gitops/**'
   workflow_dispatch:
-  schedule:
-    branches:
-      - develop
-    - cron: '0 8-17 * * *'
+  # schedule:
+  #   branches:
+  #     - main
+  #   - cron: '0 8-17 * * *'
 
 jobs:
   call-preview-workflow:
     uses: ./.github/workflows/aws_eks_preview.yml
     with:
-      pulumi-stack: staging
+      pulumi-stack: prod
     secrets: inherit
