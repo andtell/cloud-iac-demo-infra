@@ -3,6 +3,7 @@ import * as awsx from "@pulumi/awsx";
 import * as eks from "@pulumi/eks";
 import { createArgoCDHelmChart } from "./argocd";
 import { Output } from "@pulumi/pulumi";
+import * as k8s from "@pulumi/kubernetes";
 
 // Grab some values from the Pulumi configuration (or use default values)
 const config = new pulumi.Config();
@@ -47,11 +48,18 @@ function setupArgo() : Output<string> {
         const argocd = createArgoCDHelmChart(eksCluster.provider);
         const frontend = argocd.getResource("v1/Service", "argocd/argocd-server");
         // When "done", this will print the public IP.
+
+        const provider: k8s.Provider = eksCluster.provider;
+        new k8s.yaml.ConfigFile("app", {
+            file: "application.yaml"
+        }, { provider } );
+
         return isMinikube
         ? frontend.spec.clusterIP
         : frontend.status.loadBalancer.apply(
             (lb) => lb.ingress[0].ip || "https://" + lb.ingress[0].hostname
         );
+        
     } else {
         return Output.create("** Argo CD not installed **");
     } 
