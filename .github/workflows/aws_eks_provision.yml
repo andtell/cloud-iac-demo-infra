@@ -34,7 +34,6 @@ jobs:
       # & see https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions#jobsjob_idoutputs
     outputs:
       kubeconfig: ${{ steps.pulumi-up.outputs.kubeconfig }}
-      kubeconfig2: ${{ steps.kube-conf.outputs.kubeconfig2 }}
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
@@ -64,9 +63,6 @@ jobs:
         run: npm install
         working-directory: ${{ env.WORK_DIR }}
       
-      # - name: Install Pulumi CLI
-      #   uses: pulumi/action-install-pulumi-cli@v2
-      
       - name: Provision Infrastructure 🏗️
         uses: pulumi/actions@v3
         id: pulumi-up
@@ -78,20 +74,6 @@ jobs:
           comment-on-pr: true;
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-
-      # - name: Provision AWS EKS cluster with Pulumi
-      #   id: pulumi-up
-      #   run: |
-      #     pulumi stack select staging
-      #     pulumi preview
-      #     echo "lets use --suppress-outputs here in order to prevent Pulumi from logging the kubeconfig into public GitHub Action logs"
-      #     pulumi up --yes --suppress-outputs
-      #     echo "Create ~/.kube dir only, if not already existent (see https://stackoverflow.com/a/793867/4964553)"
-      #     mkdir -p ~/.kube
-      #     echo "Create kubeconfig and supply it for depending Action jobs"
-      #     pulumi stack output kubeconfig > ~/.kube/config
-      #     echo "::set-output name=kubeconfig::$(pulumi stack output kubeconfig)"
-      #   working-directory: ${{ env.WORK_DIR }}
 
         # https://stackoverflow.com/questions/59175332/using-output-from-a-previous-job-in-a-new-one-in-a-github-action
       - name: Try to connect to EKS cluster 🔌
