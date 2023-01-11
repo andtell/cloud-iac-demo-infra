@@ -18,5 +18,6 @@ jobs:
   call-preview-workflow:
     uses: ./.github/workflows/aws_eks_preview.yml
     with:
-      pulumi-stack: staging # If there would be a separate PROD cluster ... change to "prod"
+      # Stack is always hard-wired to staging in this demo
+      pulumi-stack: staging 
     secrets: inherit

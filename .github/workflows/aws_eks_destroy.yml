@@ -55,7 +55,8 @@ jobs:
         uses: pulumi/actions@v3
         with:
           command: destroy
-          stack-name: ${{ env.PULUMI_STACK }}
+          # Stack is always hard-wired to staging in this demo
+          stack-name: ${{ env.PULUMI_STACK }} 
           work-dir: ${{ env.WORK_DIR }}
           refresh: true;
         env:
