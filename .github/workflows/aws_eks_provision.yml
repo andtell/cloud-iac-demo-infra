@@ -151,3 +151,6 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
           WITH_ARGO_CD: true
+
+# Some resources
+# https://bitcoden.com/answers/share-variables-of-github-actions-job-to-multiple-subsequent-jobs-while-retaining-specific-order
