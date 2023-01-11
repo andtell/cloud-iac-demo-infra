@@ -12,13 +12,11 @@ on:
       -  'aws/eks-gitops/**'
   workflow_dispatch:
   # schedule:
-  #   branches:
-  #     - main
   #   - cron: '0 8-17 * * *'
 
 jobs:
   call-preview-workflow:
     uses: ./.github/workflows/aws_eks_preview.yml
     with:
-      pulumi-stack: prod
+      pulumi-stack: staging # If there would be a separate PROD cluster ... change to "prod"
     secrets: inherit

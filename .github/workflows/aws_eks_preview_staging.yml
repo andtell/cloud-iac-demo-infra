@@ -12,9 +12,8 @@ on:
       -  'aws/eks-gitops/**'
   workflow_dispatch:
   schedule:
-    branches:
-      - develop
     - cron: '0 8-17 * * *'
+  #  Cron above will run on main only https://stackoverflow.com/questions/58798886/github-actions-schedule-operation-on-branch
 
 jobs:
   call-preview-workflow:

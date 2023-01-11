@@ -76,7 +76,7 @@ jobs:
         id: pulumi-up
         with:
           command: up
-          stack-name: staging # When using an individual account, only use stack-name.
+          stack-name: staging # Hard-wired as I dont want another EKS cluster in this demo
           work-dir: ${{ env.WORK_DIR }}
           refresh: true;
           comment-on-pr: true;
