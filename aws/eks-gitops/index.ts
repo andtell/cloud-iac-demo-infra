@@ -50,9 +50,10 @@ function setupArgo() : Output<string> {
         // When "done", this will print the public IP.
 
         const provider: k8s.Provider = eksCluster.provider;
-        new k8s.yaml.ConfigFile("app", {
+        new k8s.yaml.ConfigFile("cadec-demo-app-argo", {
             file: "application.yaml"
-        }, { provider } );
+        }, {dependsOn: [argocd],
+            provider } );
 
         return isMinikube
         ? frontend.spec.clusterIP
