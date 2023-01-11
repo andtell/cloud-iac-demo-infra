@@ -1,4 +1,4 @@
-name: EKS - Preview/Check STAGING 🔍
+name: EKS - Preview/Check PROD 🔍
 on:
   pull_request:
     branches:
