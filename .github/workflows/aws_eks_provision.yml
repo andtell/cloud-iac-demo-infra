@@ -10,7 +10,7 @@ on:
     branches:
       - develop
     paths:
-      -  'aws/eks-gitops/**'
+      - 'aws/eks-gitops/**'
   workflow_dispatch:
 
 env:
