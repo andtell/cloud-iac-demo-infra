@@ -46,18 +46,18 @@ const eksCluster = new eks.Cluster(`eks-cluster-${pulumi.getStack()}`, {
 function setupArgo() : Output<string> {
     if(process.env.WITH_ARGO_CD) {
         const argocd = createArgoCDHelmChart(eksCluster.provider);
-        const frontend = argocd.getResource("v1/Service", "argocd/argocd-server");
+        const argoServerService = argocd.getResource("v1/Service", "argocd/argocd-server");
         // When "done", this will print the public IP.
 
         const provider: k8s.Provider = eksCluster.provider;
         new k8s.yaml.ConfigFile("cadec-demo-app-argo", {
             file: "application.yaml"
-        }, {dependsOn: [argocd],
+        }, {dependsOn: [argoServerService],
             provider } );
 
         return isMinikube
-        ? frontend.spec.clusterIP
-        : frontend.status.loadBalancer.apply(
+        ? argoServerService.spec.clusterIP
+        : argoServerService.status.loadBalancer.apply(
             (lb) => lb.ingress[0].ip || "https://" + lb.ingress[0].hostname
         );
         

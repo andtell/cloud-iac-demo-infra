@@ -18,3 +18,5 @@ kubectl get svc
 
 kubectl -n argocd get svc 
 kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d | pbcopy 
+
+kubectl -n cadec-demo get svc
