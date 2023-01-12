@@ -51,7 +51,7 @@ function setupArgo() : Output<string> {
 
         const provider: k8s.Provider = eksCluster.provider;
         new k8s.yaml.ConfigFile("cadec-demo-app-argo", {
-            file: "application.yaml"
+            file: "application-dev.yaml"
         }, {dependsOn: [argoServerService],
             provider } );
 
