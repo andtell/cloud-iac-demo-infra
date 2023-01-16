@@ -11,7 +11,8 @@ const minClusterSize = config.getNumber("minClusterSize") || 2;
 const maxClusterSize = config.getNumber("maxClusterSize") || 6;
 const desiredClusterSize = config.getNumber("desiredClusterSize") || 2;
 const eksNodeInstanceType = config.get("eksNodeInstanceType") || "t3.small";
-// Problem : no available/free pods if choosing to too small EC2 instance, see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/eni-max-pods.txt
+// Problem : no available/free pods if choosing to too small EC2 instance, 
+// see: https://github.com/awslabs/amazon-eks-ami/blob/master/files/eni-max-pods.txt
 const vpcNetworkCidr = config.get("vpcNetworkCidr") || "10.0.0.0/16";
 const isMinikube = config.requireBoolean("isMinikube");
 
@@ -37,9 +38,6 @@ const eksCluster = new eks.Cluster(`eks-cluster-${pulumi.getStack()}`, {
     maxSize: maxClusterSize,
     // Do not give the worker nodes public IP addresses
     nodeAssociatePublicIpAddress: false,
-    // Uncomment the next two lines for a private cluster (VPN access required)
-    // endpointPrivateAccess: true,
-    // endpointPublicAccess: false
     version: "1.24",
 });
 
