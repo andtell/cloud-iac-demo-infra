@@ -1,4 +1,4 @@
-name: EKS - Provision STAGING 🏗️
+name: EKS - Provision 🏗️
 
 on:
   pull_request:
