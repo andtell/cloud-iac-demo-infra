@@ -22,7 +22,6 @@ const eksVpc = new awsx.ec2.Vpc("eks-vpc", {
     cidrBlock: vpcNetworkCidr,
 });
 
-
 // Create the EKS cluster
 const eksCluster = new eks.Cluster(`eks-cluster-${pulumi.getStack()}`, {
     // Put the cluster in the new VPC created earlier

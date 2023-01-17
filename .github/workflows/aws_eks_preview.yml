@@ -15,12 +15,6 @@ jobs:
     name: Preview
     runs-on: ubuntu-latest
     steps:
-      - name: Configuration for main branch 🏭
-        if: ${{ github.ref == 'refs/heads/main' }}
-        run: echo "PULUMI_STACK=dev" >> $GITHUB_ENV
-      - name: Configuration for develop branch 😎
-        if: ${{ github.ref == 'refs/heads/develop' }}
-        run: echo "PULUMI_STACK=todo" >> $GITHUB_ENV
       - name: Checkout 🛎️
         uses: actions/checkout@v3
       - name: Setup Node ✨

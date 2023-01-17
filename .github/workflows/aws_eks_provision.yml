@@ -35,6 +35,14 @@ jobs:
     outputs:
       kubeconfig: ${{ steps.pulumi-up.outputs.kubeconfig }}
     steps:
+      - name: Configuration for main branch 🏭
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: echo "PULUMI_STACK=todo" >> $GITHUB_ENV
+      
+      - name: Configuration for develop branch 😎
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: echo "PULUMI_STACK=staging" >> $GITHUB_ENV
+
       - name: Checkout 🛎️
         uses: actions/checkout@v3
       
@@ -68,7 +76,7 @@ jobs:
         id: pulumi-up
         with:
           command: up
-          stack-name: staging # Hard-wired as I dont want another EKS cluster in this demo
+          stack-name: ${{ env.PULUMI_STACK }} 
           work-dir: ${{ env.WORK_DIR }}
           refresh: true;
           comment-on-pr: true;
