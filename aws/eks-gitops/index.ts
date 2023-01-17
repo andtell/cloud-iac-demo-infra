@@ -66,7 +66,6 @@ function setupArgo() : Output<string> {
 
 
 // Export some values for use elsewhere
-export const kubeconfig = pulumi.secret(eksCluster.kubeconfig); // sensitive - don't want this to be visible in logs
-//export const kubeconfig = eksCluster.kubeconfig; // sensitive - don't want this to be visible in logs
+export const kubeconfig = pulumi.secret(eksCluster.kubeconfig); // K8S credentials
 export const vpcId = eksVpc.vpcId;
 export const argoCDUrl = setupArgo();
